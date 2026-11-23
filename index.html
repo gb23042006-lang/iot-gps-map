@@ -1,6 +1,8 @@
+<!DOCTYPE html>
 <html>
 
 <head>
+    <meta charset="UTF-8" />
     <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css"
         type="text/css" />
     <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
@@ -61,15 +63,30 @@
                     }
                     return response.json();
                 })
-                .then(gps => {
+                .then(data => {
+                    const gpsObj = data && data.gps ? data.gps : data;
+                    const lon = gpsObj ? parseFloat(gpsObj.lon) : NaN;
+                    const lat = gpsObj ? parseFloat(gpsObj.lat) : NaN;
+
+                    if (Number.isNaN(lon) || Number.isNaN(lat)) {
+                        console.warn("Bỏ qua file thiếu tọa độ hợp lệ:", fileUrl, data);
+                        return null;
+                    }
+
                     return new atlas.data.Feature(
-                        new atlas.data.Point([parseFloat(gps.gps.lon), parseFloat(gps.gps.lat)])
+                        new atlas.data.Point([lon, lat])
                     );
+                })
+                .catch(err => {
+                    console.warn("Lỗi đọc file JSON:", fileUrl, err);
+                    return null;
                 });
         }
     </script>
     <style>
-        html, body, #myMap {
+        html,
+        body,
+        #myMap {
             width: 100%;
             height: 100%;
             margin: 0;
