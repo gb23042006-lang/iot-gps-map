@@ -32,7 +32,7 @@
                     const validFeatures = features.filter(Boolean);
 
                     map = new atlas.Map('myMap', {
-                        center: [-122.26473, 47.73444],
+                        center: [106.7009, 10.7769],
                         zoom: 14,
                         authOptions: {
                             authType: "subscriptionKey",
@@ -65,8 +65,10 @@
                 })
                 .then(data => {
                     const gpsObj = data && data.gps ? data.gps : data;
-                    const lon = gpsObj ? parseFloat(gpsObj.lon) : NaN;
-                    const lat = gpsObj ? parseFloat(gpsObj.lat) : NaN;
+                    const rawLat = gpsObj ? (gpsObj.lat ?? gpsObj.latitude) : NaN;
+                    const rawLon = gpsObj ? (gpsObj.lon ?? gpsObj.longitude) : NaN;
+                    const lat = parseFloat(rawLat);
+                    const lon = parseFloat(rawLon);
 
                     if (Number.isNaN(lon) || Number.isNaN(lat)) {
                         console.warn("Bỏ qua file thiếu tọa độ hợp lệ:", fileUrl, data);
